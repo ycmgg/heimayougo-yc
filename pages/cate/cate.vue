@@ -1,5 +1,6 @@
 <template>
   <view>
+    <my-search @myclick="gotoSearch"></my-search>
     <view class="scroll-view-container">
       <!-- 左侧的滚动视图区域 -->
       <scroll-view class="left-scroll-view" scroll-y="true" :style="{height: wh + 'px'}">
@@ -43,7 +44,7 @@
     },
     onLoad() {
       const sysInfo = uni.getSystemInfoSync()
-      this.wh = sysInfo.windowHeight
+      this.wh = sysInfo.windowHeight - 50
       this.getCateList()
     },
     methods: {
@@ -64,12 +65,18 @@
         this.cateLevel2 = this.cateList[i].children
         this.scrollTop = this.scrollTop === 1 ? 0 : 1
       },
-    //  跳转分类页面
-    gotoGoodsList (val) {
-      uni.navigateTo({
-        url: `/subpkg/goods_list/goods_list?cid=${val.cat_id}`
-      })
-    }
+      //  跳转分类页面
+      gotoGoodsList(val) {
+        uni.navigateTo({
+          url: `/subpkg/goods_list/goods_list?cid=${val.cat_id}`
+        })
+      },
+      // 跳转到分包中的搜索页面
+      gotoSearch() {
+        uni.navigateTo({
+          url: '/subpkg/search/search'
+        })
+      }
     }
   }
 </script>
@@ -115,23 +122,23 @@
       }
     }
   }
-  
+
   .cate-1v3-list {
     display: flex;
     flex-wrap: wrap;
-  
+
     .cate-1v3-item {
       width: 33.33%;
       margin-bottom: 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
-  
+
       image {
         width: 60px;
         height: 60px;
       }
-  
+
       text {
         font-size: 12px;
       }
