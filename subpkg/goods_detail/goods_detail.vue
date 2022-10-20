@@ -37,6 +37,10 @@
 </template>
 
 <script>
+  import {
+    mapMutations,
+    mapGetters
+  } from 'vuex'
   export default {
     data() {
       return {
@@ -50,7 +54,7 @@
         }, {
           icon: 'cart',
           text: '购物车',
-          info: 2
+          info: 0
         }],
         buttonGroup: [{
             text: '加入购物车',
@@ -65,11 +69,26 @@
         ]
       };
     },
+    computed:{
+      ...mapGetters('cart', ['total'])
+    },
+    watch :{
+      total:{
+        handler (val) {
+          const v = this.options.find(val => val.text === '购物车')
+           if(v) {
+             v.info = val
+           }
+        },
+        immediate: true
+      }
+    },
     onLoad(sss) {
       const goods_id = sss.goods_id
       this.getGoodsDetail(goods_id)
     },
     methods: {
+      ...mapMutations('cart', ['addToCart']),
       async getGoodsDetail(goods_id) {
         try {
           const {
@@ -93,15 +112,25 @@
         })
       },
       onClick(e) {
-        if(e.content.text === '购物车') {
+        if (e.content.text === '购物车') {
           uni.switchTab({
             url: '/pages/cart/cart'
           })
         }
       },
       buttonClick(e) {
-        console.log(e)
-        this.options[2].info++
+        if (e.content.text === '加入购物车') {
+          const goods = {
+            goods_id: this.goods_info.goods_id, // 商品的Id
+            goods_name: this.goods_info.goods_name, // 商品的名称
+            goods_price: this.goods_info.goods_price, // 商品的价格
+            goods_count: 1, // 商品的数量
+            goods_small_logo: this.goods_info.goods_small_logo, // 商品的图片
+            goods_state: true // 商品的勾选状态
+
+          }
+          this.addToCart(goods)
+        }
       }
     }
   }
